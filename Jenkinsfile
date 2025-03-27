@@ -8,12 +8,20 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+       stage('Install Dependencies') {
             steps {
                 sh '''
                 echo "Current directory: $(pwd)"
-                python3 -m pip install --upgrade pip
-                python3 -m pip install -r python-demo/requirements.txt
+                
+                # Create and activate a virtual environment
+                python3 -m venv venv
+                source venv/bin/activate
+                
+                # Upgrade pip and install dependencies inside venv
+                venv/bin/python -m pip install --upgrade pip
+                venv/bin/pip install -r requirements.txt
+                
+                deactivate
                 '''
             }
         }
@@ -22,10 +30,12 @@ pipeline {
             steps {
                 sh '''
                 echo "Running tests..."
-                ls -R  # List directory structure for debugging
+                ls -R  # Debugging: List directory structure
                 
-                # Run tests without requiring __init__.py
-                PYTHONPATH=$(pwd)/python-demo python3 -m unittest discover -s python-demo/tests -p "test_*.py"
+                # Activate virtual environment and run tests
+                source venv/bin/activate
+                PYTHONPATH=$(pwd)/python-demo venv/bin/python -m unittest discover -s python-demo/tests -p "test_*.py"
+                deactivate
                 '''
             }
         }
@@ -44,6 +54,7 @@ pipeline {
             steps {
                 sh '''
                 echo "Archiving artifacts..."
+                mkdir -p build  # Ensure build directory exists
                 tar -czf python-demo.tar.gz -C build .
                 '''
                 archiveArtifacts artifacts: 'python-demo.tar.gz', fingerprint: true
