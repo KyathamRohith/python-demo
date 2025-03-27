@@ -8,19 +8,22 @@ pipeline {
             }
         }
 
-       stage('Install Dependencies') {
+        stage('Install Dependencies') {
             steps {
                 sh '''
                 echo "Current directory: $(pwd)"
-                
+
+                # Ensure python3-venv and python3-pip are installed
+                sudo apt update && sudo apt install -y python3-venv python3-pip
+
                 # Create and activate a virtual environment
                 python3 -m venv venv
                 source venv/bin/activate
-                
-                # Upgrade pip and install dependencies inside venv
-                venv/bin/python -m pip install --upgrade pip
-                venv/bin/pip install -r requirements.txt
-                
+
+                # Install dependencies inside virtual environment
+                venv/bin/pip install --upgrade pip
+                venv/bin/pip install -r python-demo/requirements.txt
+
                 deactivate
                 '''
             }
