@@ -22,7 +22,7 @@ pipeline {
 
                 # Install dependencies inside virtual environment
                 venv/bin/pip install --upgrade pip
-                venv/bin/pip install -r python-demo/requirements.txt
+                venv/bin/pip install -r requirements.txt
                 '''
             }
         }
