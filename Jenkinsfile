@@ -35,7 +35,7 @@ pipeline {
                 
                 # Activate virtual environment and run tests
                 . venv/bin/activate
-                PYTHONPATH=$(pwd)/python-demo venv/bin/python -m unittest discover -s python-demo/tests -p "test_*.py"
+                PYTHONPATH=$(pwd) venv/bin/python -m unittest discover -s tests -p "test_*.py"
                 '''
             }
         }
@@ -45,7 +45,7 @@ pipeline {
                 sh '''
                 echo "Building the project..."
                 mkdir -p build
-                cp -r python-demo/src/* build/
+                cp -r src/* build/
                 '''
             }
         }
